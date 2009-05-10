@@ -1,0 +1,21 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: ditz-show does not work in log and status mode
+desc: |-
+  The command ditz-show does not work in those modes because the regexp
+  used to find the issue name is prepared only to parse ditz-todo
+  output.
+type: :bugfix
+component: emacs-ditz
+release: 
+reporter: Tiago Saboga <tiagosaboga@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-05-10 02:37:18.344043 Z
+references: []
+
+id: 05660d90d38bb91fe6574ee201859584542dddd7
+log_events: 
+- - 2009-05-10 02:37:21.464259 Z
+  - Tiago Saboga <tiagosaboga@gmail.com>
+  - created
+  - ""
