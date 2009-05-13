@@ -5,8 +5,8 @@ type: :bugfix
 component: emacs-ditz
 release: 
 reporter: Erik Ostrom <erik@echographia.com>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-05-13 22:28:02.931611 Z
 references: []
 
@@ -16,3 +16,7 @@ log_events:
   - antipop <kentarok@gmail.com>
   - created
   - ""
+- - 2009-05-13 22:45:11.011717 Z
+  - Erik Ostrom <erik@echographia.com>
+  - closed with disposition fixed
+  - Revised issue regex to handle > and other status markers.

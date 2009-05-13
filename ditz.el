@@ -47,7 +47,7 @@ must set it from minibuffer."
   :group 'ditz)
 
 ;; Constant variables
-(defconst ditz-issue-id-regex "^[_ ]+\\([^:\n]+\\):.*$"
+(defconst ditz-issue-id-regex "^[_>=x] +\\([^:\n]+\\):.*$"
   "Regex for issue id.")
 
 (defconst ditz-release-name-regex "^\\(Version \\)?\\([^\n ]+\\) *.*$"
