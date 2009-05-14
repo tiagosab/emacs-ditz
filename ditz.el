@@ -239,7 +239,9 @@ must set it from minibuffer."
 
     (setq ditz-last-visited-issue-directory issue-directory)
     (mapconcat 'identity
-               (list ditz-program "-i" issue-directory command arg) " ")))
+               (list ditz-program
+                     "-i" (shell-quote-argument issue-directory)
+                     command arg) " ")))
 
 ;; Hooks
 (defvar ditz-mode-hook nil
