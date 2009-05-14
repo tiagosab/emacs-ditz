@@ -47,7 +47,10 @@ must set it from minibuffer."
   :group 'ditz)
 
 ;; Constant variables
-(defconst ditz-issue-id-regex "^[_>=x] +\\([^:\n]+\\):.*$"
+(defconst ditz-status-regex "^[_>=x]"
+  "Regex for issue status.")
+
+(defconst ditz-issue-id-regex (concat ditz-status-regex " +\\([^:\n]+\\):.*$")
   "Regex for issue id.")
 
 (defconst ditz-release-name-regex "^\\(Version \\)?\\([^\n ]+\\) *.*$"
@@ -105,6 +108,19 @@ must set it from minibuffer."
     (setq issue-id (ditz-extract-thing-at-point ditz-issue-id-regex 1))
     (if issue-id
         (ditz-call-process "assign" issue-id "switch")
+      (error "Issue id not found"))))
+
+(defun ditz-start-stop ()
+  "Start or stop working on issue."
+  (interactive)
+  (let ((issue-id (ditz-extract-thing-at-point ditz-issue-id-regex 1))
+        (status (ditz-status)))
+    (if (and issue-id status)
+        (ditz-call-process 
+         (cond ((memq status '(unstarted paused closed)) "start")
+               ((memq status '(in-progress)) "stop")
+               (t (error "Can't interpret status marker")))
+         issue-id)
       (error "Issue id not found"))))
 
 (defun ditz-edit ()
@@ -243,6 +259,15 @@ must set it from minibuffer."
                      "-i" (shell-quote-argument issue-directory)
                      command arg) " ")))
 
+(defun ditz-status ()
+  "Return symbol indicating issue's status."
+  (let* ((c (string-to-char (ditz-extract-thing-at-point ditz-status-regex 0)))
+         (pair (assq c '((?_ . unstarted)
+                         (?> . in-progress)
+                         (?= . paused)
+                         (?x . closed)))))
+    (if pair (cdr pair))))
+
 ;; Hooks
 (defvar ditz-mode-hook nil
   "*Hooks for Taskpaper major mode")
@@ -255,6 +280,7 @@ must set it from minibuffer."
 (define-key ditz-mode-map "\C-m" 'ditz-show)
 (define-key ditz-mode-map "A"    'ditz-add)
 (define-key ditz-mode-map "a"    'ditz-assign)
+(define-key ditz-mode-map "S"    'ditz-start-stop)
 (define-key ditz-mode-map "D"    'ditz-drop)
 (define-key ditz-mode-map "e"    'ditz-edit)
 (define-key ditz-mode-map "c"    'ditz-close)

@@ -5,8 +5,8 @@ type: :feature
 component: emacs-ditz
 release: 
 reporter: Erik Ostrom <erik@echographia.com>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-05-13 22:29:35.771999 Z
 references: []
 
@@ -20,3 +20,7 @@ log_events:
   - Erik Ostrom <erik@echographia.com>
   - edited description
   - ""
+- - 2009-05-14 03:11:30.544859 Z
+  - Erik Ostrom <erik@echographia.com>
+  - closed with disposition fixed
+  - Added ditz-start-stop command.
