@@ -61,6 +61,9 @@ must set it from minibuffer."
 (defconst ditz-release-name-regex "^\\([^\n_>=x][^\n :]*\\) (.*):$"
   "Regex for release name.")
 
+(defconst ditz-unassigned-regex "^\\(Unassigned\\):$"
+  "Regex for unassigned issues header.")
+
 (defconst ditz-buffer-issue-id-regex "^Issue \\([^:\n]+\\)$"
   "Regex for issue ID in an issue buffer.")
 
@@ -317,7 +320,8 @@ must set it from minibuffer."
 (defvar ditz-release-name-face 'ditz-release-name-face)
 (setq ditz-font-lock-keywords
   `((,ditz-issue-id-regex (1 ditz-issue-id-face t))
-    (,ditz-release-name-regex (1 ditz-release-name-face t))))
+    (,ditz-release-name-regex (1 ditz-release-name-face t))
+    (,ditz-unassigned-regex (1 ditz-release-name-face t))))
 
 ;; Ditz major mode
 (define-derived-mode ditz-mode fundamental-mode "Ditz"
