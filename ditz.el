@@ -56,6 +56,9 @@ must set it from minibuffer."
 (defconst ditz-release-name-regex "^\\(Version \\)?\\([^\n ]+\\) *.*$"
   "Regex for issue id.")
 
+(defconst ditz-buffer-issue-id-regex "^Issue \\([^:\n]+\\)$"
+  "Regex for issue ID in an issue buffer.")
+
 ;; Commands
 (defun ditz-init ()
   "Initialize ditz issues."
@@ -95,8 +98,7 @@ must set it from minibuffer."
 (defun ditz-show ()
   "Show issue detale."
   (interactive)
-  (let ((issue-id nil))
-    (setq issue-id (ditz-extract-thing-at-point ditz-issue-id-regex 1))
+  (let ((issue-id (ditz-find-issue)))
     (if issue-id
         (ditz-call-process "show" issue-id "switch")
       (error "Issue id not found"))))
@@ -104,8 +106,7 @@ must set it from minibuffer."
 (defun ditz-assign ()
   "Assign issue to a release."
   (interactive)
-  (let ((issue-id nil))
-    (setq issue-id (ditz-extract-thing-at-point ditz-issue-id-regex 1))
+  (let ((issue-id (ditz-find-issue)))
     (if issue-id
         (ditz-call-process "assign" issue-id "switch")
       (error "Issue id not found"))))
@@ -113,7 +114,7 @@ must set it from minibuffer."
 (defun ditz-start-stop ()
   "Start or stop working on issue."
   (interactive)
-  (let ((issue-id (ditz-extract-thing-at-point ditz-issue-id-regex 1))
+  (let ((issue-id (ditz-find-issue))
         (status (ditz-status)))
     (if (and issue-id status)
         (ditz-call-process 
@@ -126,8 +127,7 @@ must set it from minibuffer."
 (defun ditz-edit ()
   "Edit issue detale."
   (interactive)
-  (let ((issue-id nil))
-    (setq issue-id (ditz-extract-thing-at-point ditz-issue-id-regex 1))
+  (let ((issue-id (ditz-find-issue)))
     (if issue-id
         (ditz-call-process "edit" issue-id "switch")
       (error "Issue id not found"))))
@@ -135,8 +135,7 @@ must set it from minibuffer."
 (defun ditz-close ()
   "Close a issue."
   (interactive)
-  (let ((issue-id nil))
-    (setq issue-id (ditz-extract-thing-at-point ditz-issue-id-regex 1))
+  (let ((issue-id (ditz-find-issue)))
     (if issue-id
         (ditz-call-process "close" issue-id "switch")
       (error "Issue id not found"))))
@@ -144,8 +143,7 @@ must set it from minibuffer."
 (defun ditz-drop ()
   "Drop an issue."
   (interactive)
-  (let ((issue-id nil))
-    (setq issue-id (ditz-extract-thing-at-point ditz-issue-id-regex 1))
+  (let ((issue-id (ditz-find-issue)))
     (if issue-id
         (when (yes-or-no-p (concat "Drop " issue-id " "))
           (ditz-call-process "drop" issue-id "switch"))
@@ -166,6 +164,12 @@ must set it from minibuffer."
                                   (progn (end-of-line) (point)))))
       (when (string-match regex line)
         (match-string n line)))))
+
+(defun ditz-find-issue ()
+  (or (ditz-extract-thing-at-point ditz-issue-id-regex 1) ;; status line
+      (save-excursion
+        (goto-char (point-min))
+        (ditz-extract-thing-at-point ditz-buffer-issue-id-regex 1)))) ;; header
 
 (defun ditz-reload ()
   (interactive)
