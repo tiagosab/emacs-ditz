@@ -1,0 +1,22 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Make font-lock highlight in-progress issues
+desc: The regex used to find issues isn't the same as the one used to highlight them, so when I added support for in-progress and paused issues, I missed font-lock support.
+type: :bugfix
+component: emacs-ditz
+release: 
+reporter: Erik Ostrom <erik@echographia.com>
+status: :in_progress
+disposition: 
+creation_time: 2009-05-25 07:17:19.426956 Z
+references: []
+
+id: 9fc4b6a03acdd9f4fe66339d62a1fbffe00d51a8
+log_events: 
+- - 2009-05-25 07:17:20.810785 Z
+  - Erik Ostrom <erik@echographia.com>
+  - created
+  - ""
+- - 2009-05-25 07:23:47.508887 Z
+  - Erik Ostrom <erik@echographia.com>
+  - changed status from unstarted to in_progress
+  - Starting work on this (and now I can use it as a test case).

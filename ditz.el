@@ -47,13 +47,18 @@ must set it from minibuffer."
   :group 'ditz)
 
 ;; Constant variables
+
+;; NOTE: If you change the subgroups in these regexes, you may also need to
+;; change the code that uses them - both the ditz-extract-thing-at-point calls
+;; and the ditz-font-lock-keywords variable.
+
 (defconst ditz-status-regex "^[_>=x]"
   "Regex for issue status.")
 
 (defconst ditz-issue-id-regex (concat ditz-status-regex " +\\([^:\n]+\\):.*$")
   "Regex for issue id.")
 
-(defconst ditz-release-name-regex "^\\(Version \\)?\\([^\n ]+\\) *.*$"
+(defconst ditz-release-name-regex "^\\([^\n_>=x][^\n :]*\\) (.*):$"
   "Regex for issue id.")
 
 (defconst ditz-buffer-issue-id-regex "^Issue \\([^:\n]+\\)$"
@@ -153,7 +158,7 @@ must set it from minibuffer."
   "Mark issues as released."
   (interactive)
   (let ((release-name nil))
-    (setq release-name (ditz-extract-thing-at-point ditz-release-name-regex 2))
+    (setq release-name (ditz-extract-thing-at-point ditz-release-name-regex 1))
     (if release-name
         (ditz-call-process "release" release-name "switch")
       (error "Release name not found"))))
@@ -309,9 +314,9 @@ must set it from minibuffer."
 
 (defvar ditz-issue-id-face 'ditz-issue-id-face)
 (defvar ditz-release-name-face 'ditz-release-name-face)
-(defvar ditz-font-lock-keywords
-  '(("^[_ ]+\\([^:\n]+\\):.*$" (1 ditz-issue-id-face t))
-    ("^Version *\\([^\n ]+\\) *.*$" (1 ditz-release-name-face t))))
+(setq ditz-font-lock-keywords
+  `((,ditz-issue-id-regex (1 ditz-issue-id-face t))
+    (,ditz-release-name-regex (1 ditz-release-name-face t))))
 
 ;; Ditz major mode
 (define-derived-mode ditz-mode fundamental-mode "Ditz"
