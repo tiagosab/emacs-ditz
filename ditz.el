@@ -287,6 +287,7 @@ must set it from minibuffer."
 
 (define-key ditz-mode-map "s"    'ditz-show)
 (define-key ditz-mode-map "\C-m" 'ditz-show)
+(define-key ditz-mode-map "l"    'ditz-log)
 (define-key ditz-mode-map "A"    'ditz-add)
 (define-key ditz-mode-map "a"    'ditz-assign)
 (define-key ditz-mode-map "S"    'ditz-start-stop)
