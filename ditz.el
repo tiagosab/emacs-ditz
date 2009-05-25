@@ -304,9 +304,9 @@ must set it from minibuffer."
 ;; Face
 (defface ditz-issue-id-face
   '((((class color) (background light))
-     (:foreground "blightblue" :underline t :weight bold))
+     (:foreground "blue" :underline t :weight bold))
     (((class color) (background dark))
-     (:foreground "blightblue" :underline t :weight bold)))
+     (:foreground "PowderBlue" :underline t :weight bold)))
   "Face definition for issue id")
 
 (defface ditz-release-name-face
