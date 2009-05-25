@@ -55,7 +55,7 @@ must set it from minibuffer."
 (defconst ditz-status-regex "^[_>=x]"
   "Regex for issue status.")
 
-(defconst ditz-issue-id-regex (concat ditz-status-regex " +\\([^:\n]+\\):.*$")
+(defconst ditz-issue-id-regex "^\\([_>=x]\\|Issue\\) +\\([^:\n]+\\)"
   "Regex for issue id.")
 
 (defconst ditz-release-name-regex "^\\([^\n_>=x][^\n :]*\\) (.*):$"
@@ -174,10 +174,10 @@ must set it from minibuffer."
         (match-string n line)))))
 
 (defun ditz-find-issue ()
-  (or (ditz-extract-thing-at-point ditz-issue-id-regex 1) ;; status line
+  (or (ditz-extract-thing-at-point ditz-issue-id-regex 2) ;; status line
       (save-excursion
         (goto-char (point-min))
-        (ditz-extract-thing-at-point ditz-buffer-issue-id-regex 1)))) ;; header
+        (ditz-extract-thing-at-point ditz-issue-id-regex 2)))) ;; header
 
 (defun ditz-reload ()
   (interactive)
@@ -318,8 +318,8 @@ must set it from minibuffer."
 
 (defvar ditz-issue-id-face 'ditz-issue-id-face)
 (defvar ditz-release-name-face 'ditz-release-name-face)
-(setq ditz-font-lock-keywords
-  `((,ditz-issue-id-regex (1 ditz-issue-id-face t))
+(defvar ditz-font-lock-keywords
+  `((,ditz-issue-id-regex (2 ditz-issue-id-face t))
     (,ditz-release-name-regex (1 ditz-release-name-face t))
     (,ditz-unassigned-regex (1 ditz-release-name-face t))))
 

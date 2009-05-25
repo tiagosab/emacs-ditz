@@ -5,8 +5,8 @@ type: :bugfix
 component: emacs-ditz
 release: 
 reporter: Erik Ostrom <erik@echographia.com>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2009-05-25 07:17:19.426956 Z
 references: []
 
@@ -20,3 +20,7 @@ log_events:
   - Erik Ostrom <erik@echographia.com>
   - changed status from unstarted to in_progress
   - Starting work on this (and now I can use it as a test case).
+- - 2009-05-25 08:43:55.442098 Z
+  - Erik Ostrom <erik@echographia.com>
+  - closed with disposition fixed
+  - Fixed a couple of commits back, but this fix is a little better.
