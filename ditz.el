@@ -59,7 +59,7 @@ must set it from minibuffer."
   "Regex for issue id.")
 
 (defconst ditz-release-name-regex "^\\([^\n_>=x][^\n :]*\\) (.*):$"
-  "Regex for issue id.")
+  "Regex for release name.")
 
 (defconst ditz-buffer-issue-id-regex "^Issue \\([^:\n]+\\)$"
   "Regex for issue ID in an issue buffer.")
@@ -101,7 +101,7 @@ must set it from minibuffer."
   (ditz-call-process "log" nil "pop"))
 
 (defun ditz-show ()
-  "Show issue detale."
+  "Show issue details."
   (interactive)
   (let ((issue-id (ditz-find-issue)))
     (if issue-id
@@ -130,7 +130,7 @@ must set it from minibuffer."
       (error "Issue id not found"))))
 
 (defun ditz-edit ()
-  "Edit issue detale."
+  "Edit issue details."
   (interactive)
   (let ((issue-id (ditz-find-issue)))
     (if issue-id
@@ -138,7 +138,7 @@ must set it from minibuffer."
       (error "Issue id not found"))))
 
 (defun ditz-close ()
-  "Close a issue."
+  "Close an issue."
   (interactive)
   (let ((issue-id (ditz-find-issue)))
     (if issue-id
@@ -279,7 +279,7 @@ must set it from minibuffer."
 
 ;; Hooks
 (defvar ditz-mode-hook nil
-  "*Hooks for Taskpaper major mode")
+  "*Hooks for Ditz major mode")
 
 ;; Keymap
 (defvar ditz-mode-map (make-keymap)
@@ -320,7 +320,7 @@ must set it from minibuffer."
 
 ;; Ditz major mode
 (define-derived-mode ditz-mode fundamental-mode "Ditz"
-  "Major mode Ditz information."
+  "Major mode for interacting with the Ditz issue tracker."
   (interactive)
   (kill-all-local-variables)
   (setq major-mode 'ditz-mode)
