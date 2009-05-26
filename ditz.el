@@ -140,6 +140,14 @@ must set it from minibuffer."
         (ditz-call-process "edit" issue-id "switch")
       (error "Issue id not found"))))
 
+(defun ditz-comment ()
+  "Comment on issue."
+  (interactive)
+  (let ((issue-id (ditz-find-issue)))
+    (if issue-id
+        (ditz-call-process "comment" issue-id "switch")
+      (error "Issue id not found"))))
+
 (defun ditz-close ()
   "Close an issue."
   (interactive)
@@ -296,6 +304,7 @@ must set it from minibuffer."
 (define-key ditz-mode-map "S"    'ditz-start-stop)
 (define-key ditz-mode-map "D"    'ditz-drop)
 (define-key ditz-mode-map "e"    'ditz-edit)
+(define-key ditz-mode-map "C"    'ditz-comment)
 (define-key ditz-mode-map "c"    'ditz-close)
 (define-key ditz-mode-map "r"    'ditz-release)
 (define-key ditz-mode-map "g"    'ditz-reload)
