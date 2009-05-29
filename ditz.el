@@ -123,7 +123,7 @@ must set it from minibuffer."
   "Start or stop working on issue."
   (interactive)
   (let ((issue-id (ditz-find-issue))
-        (status (ditz-status)))
+        (status (ditz-issue-status)))
     (if (and issue-id status)
         (ditz-call-process 
          (cond ((memq status '(unstarted paused closed)) "start")
@@ -279,7 +279,7 @@ must set it from minibuffer."
                      "-i" (shell-quote-argument issue-directory)
                      command arg) " ")))
 
-(defun ditz-status ()
+(defun ditz-issue-status ()
   "Return symbol indicating issue's status."
   (let* ((c (string-to-char (ditz-extract-thing-at-point ditz-status-regex 0)))
          (pair (assq c '((?_ . unstarted)
