@@ -281,12 +281,17 @@ must set it from minibuffer."
 
 (defun ditz-issue-status ()
   "Return symbol indicating issue's status."
-  (let* ((c (string-to-char (ditz-extract-thing-at-point ditz-status-regex 0)))
-         (pair (assq c '((?_ . unstarted)
-                         (?> . in-progress)
-                         (?= . paused)
-                         (?x . closed)))))
-    (if pair (cdr pair))))
+  (let ((marker (ditz-extract-thing-at-point ditz-status-regex 0)))
+    (if marker
+        (cdr (assq (string-to-char marker) 
+                   '((?_ . unstarted)
+                     (?> . in-progress)
+                     (?= . paused)
+                     (?x . closed))))
+      (save-excursion
+        (goto-char (point-min))
+        (if (re-search-forward "^\\s-*Status: \\(.*\\)\\s-*$")
+            (intern (subst-char-in-string ?\ ?\- (match-string 1))))))))
 
 ;; Hooks
 (defvar ditz-mode-hook nil
