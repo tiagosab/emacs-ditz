@@ -276,7 +276,7 @@ must set it from minibuffer."
     (setq ditz-last-visited-issue-directory issue-directory)
     (mapconcat 'identity
 	       (list ditz-program
-		     "-i" (shell-quote-argument issue-directory)
+		     "-i" (shell-quote-argument (expand-file-name issue-directory))
 		     command (and arg (shell-quote-argument arg))) " ")))
 
 (defun ditz-issue-status ()
