@@ -47,11 +47,25 @@ must set it from minibuffer."
   :group 'ditz)
 
 ;; Constant variables
-(defconst ditz-issue-id-regex "^[_ ]+\\([^:\n]+\\):.*$"
+
+;; NOTE: If you change the subgroups in these regexes, you may also need to
+;; change the code that uses them - both the ditz-extract-thing-at-point calls
+;; and the ditz-font-lock-keywords variable.
+
+(defconst ditz-status-regex "^[_>=x]"
+  "Regex for issue status.")
+
+(defconst ditz-issue-id-regex "^\\([_>=x]\\|Issue\\) +\\([^:\n]+\\)"
   "Regex for issue id.")
 
-(defconst ditz-release-name-regex "^\\(Version \\)?\\([^\n ]+\\) *.*$"
-  "Regex for issue id.")
+(defconst ditz-release-name-regex "^\\([^\n_>=x][^\n :]*\\) (.*):$"
+  "Regex for release name.")
+
+(defconst ditz-unassigned-regex "^\\(Unassigned\\):$"
+  "Regex for unassigned issues header.")
+
+(defconst ditz-buffer-issue-id-regex "^Issue \\([^:\n]+\\)$"
+  "Regex for issue ID in an issue buffer.")
 
 ;; Commands
 (defun ditz-init ()
@@ -90,10 +104,9 @@ must set it from minibuffer."
   (ditz-call-process "log" nil "pop"))
 
 (defun ditz-show ()
-  "Show issue detale."
+  "Show issue details."
   (interactive)
-  (let ((issue-id nil))
-    (setq issue-id (format "'%s'" (ditz-extract-thing-at-point ditz-issue-id-regex 1)))
+  (let ((issue-id (ditz-find-issue)))
     (if issue-id
 	(ditz-call-process "show" issue-id "switch")
       (error "Issue id not found"))))
@@ -101,26 +114,44 @@ must set it from minibuffer."
 (defun ditz-assign ()
   "Assign issue to a release."
   (interactive)
-  (let ((issue-id nil))
-    (setq issue-id (ditz-extract-thing-at-point ditz-issue-id-regex 1))
+  (let ((issue-id (ditz-find-issue)))
     (if issue-id
 	(ditz-call-process "assign" issue-id "switch")
       (error "Issue id not found"))))
 
-(defun ditz-edit ()
-  "Edit issue detale."
+(defun ditz-start-stop ()
+  "Start or stop working on issue."
   (interactive)
-  (let ((issue-id nil))
-    (setq issue-id (ditz-extract-thing-at-point ditz-issue-id-regex 1))
+  (let ((issue-id (ditz-find-issue))
+	(status (ditz-issue-status)))
+    (if (and issue-id status)
+	(ditz-call-process
+	 (cond ((memq status '(unstarted paused closed)) "start")
+	       ((memq status '(in-progress)) "stop")
+	       (t (error "Can't interpret status marker")))
+	 issue-id)
+      (error "Issue id not found"))))
+
+(defun ditz-edit ()
+  "Edit issue details."
+  (interactive)
+  (let ((issue-id (ditz-find-issue)))
     (if issue-id
 	(ditz-call-process "edit" issue-id "switch")
       (error "Issue id not found"))))
 
-(defun ditz-close ()
-  "Close a issue."
+(defun ditz-comment ()
+  "Comment on issue."
   (interactive)
-  (let ((issue-id nil))
-    (setq issue-id (ditz-extract-thing-at-point ditz-issue-id-regex 1))
+  (let ((issue-id (ditz-find-issue)))
+    (if issue-id
+	(ditz-call-process "comment" issue-id "switch")
+      (error "Issue id not found"))))
+
+(defun ditz-close ()
+  "Close an issue."
+  (interactive)
+  (let ((issue-id (ditz-find-issue)))
     (if issue-id
 	(ditz-call-process "close" issue-id "switch")
       (error "Issue id not found"))))
@@ -128,8 +159,7 @@ must set it from minibuffer."
 (defun ditz-drop ()
   "Drop an issue."
   (interactive)
-  (let ((issue-id nil))
-    (setq issue-id (ditz-extract-thing-at-point ditz-issue-id-regex 1))
+  (let ((issue-id (ditz-find-issue)))
     (if issue-id
 	(when (yes-or-no-p (concat "Drop " issue-id " "))
 	  (ditz-call-process "drop" issue-id "switch"))
@@ -139,7 +169,7 @@ must set it from minibuffer."
   "Mark issues as released."
   (interactive)
   (let ((release-name nil))
-    (setq release-name (ditz-extract-thing-at-point ditz-release-name-regex 2))
+    (setq release-name (ditz-extract-thing-at-point ditz-release-name-regex 1))
     (if release-name
 	(ditz-call-process "release" release-name "switch")
       (error "Release name not found"))))
@@ -150,6 +180,12 @@ must set it from minibuffer."
 				  (progn (end-of-line) (point)))))
       (when (string-match regex line)
 	(match-string n line)))))
+
+(defun ditz-find-issue ()
+  (or (ditz-extract-thing-at-point ditz-issue-id-regex 2) ;; status line
+      (save-excursion
+	(goto-char (point-min))
+	(ditz-extract-thing-at-point ditz-issue-id-regex 2)))) ;; header
 
 (defun ditz-reload ()
   (interactive)
@@ -239,11 +275,27 @@ must set it from minibuffer."
 
     (setq ditz-last-visited-issue-directory issue-directory)
     (mapconcat 'identity
-	       (list ditz-program "-i" issue-directory command arg) " ")))
+	       (list ditz-program
+		     "-i" (shell-quote-argument issue-directory)
+		     command arg) " ")))
+
+(defun ditz-issue-status ()
+  "Return symbol indicating issue's status."
+  (let ((marker (ditz-extract-thing-at-point ditz-status-regex 0)))
+    (if marker
+	(cdr (assq (string-to-char marker)
+		   '((?_ . unstarted)
+		     (?> . in-progress)
+		     (?= . paused)
+		     (?x . closed))))
+      (save-excursion
+	(goto-char (point-min))
+	(if (re-search-forward "^\\s-*Status: \\(.*\\)\\s-*$")
+	    (intern (subst-char-in-string ?\ ?\- (match-string 1))))))))
 
 ;; Hooks
 (defvar ditz-mode-hook nil
-  "*Hooks for Taskpaper major mode")
+  "*Hooks for Ditz major mode")
 
 ;; Keymap
 (defvar ditz-mode-map
@@ -266,9 +318,9 @@ must set it from minibuffer."
 ;; Face
 (defface ditz-issue-id-face
   '((((class color) (background light))
-     (:foreground "blightblue" :underline t :weight bold))
+     (:foreground "blue" :underline t :weight bold))
     (((class color) (background dark))
-     (:foreground "blightblue" :underline t :weight bold)))
+     (:foreground "PowderBlue" :underline t :weight bold)))
   "Face definition for issue id")
 
 (defface ditz-release-name-face
@@ -281,12 +333,13 @@ must set it from minibuffer."
 (defvar ditz-issue-id-face 'ditz-issue-id-face)
 (defvar ditz-release-name-face 'ditz-release-name-face)
 (defvar ditz-font-lock-keywords
-  '(("^[_ ]+\\([^:\n]+\\):.*$" (1 ditz-issue-id-face t))
-    ("^Version *\\([^\n ]+\\) *.*$" (1 ditz-release-name-face t))))
+  `((,ditz-issue-id-regex (2 ditz-issue-id-face t))
+    (,ditz-release-name-regex (1 ditz-release-name-face t))
+    (,ditz-unassigned-regex (1 ditz-release-name-face t))))
 
 ;; Ditz major mode
 (define-derived-mode ditz-mode fundamental-mode "Ditz"
-  "Major mode Ditz information."
+  "Major mode for interacting with the Ditz issue tracker."
   (interactive)
   (kill-all-local-variables)
   (setq major-mode 'ditz-mode)

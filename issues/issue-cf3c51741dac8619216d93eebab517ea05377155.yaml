@@ -1,0 +1,26 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: make commands work in 'show issue' buffers
+desc: ""
+type: :feature
+component: emacs-ditz
+release: 
+reporter: Erik Ostrom <erik@echographia.com>
+status: :closed
+disposition: :fixed
+creation_time: 2009-05-25 07:11:15.976242 Z
+references: []
+
+id: cf3c51741dac8619216d93eebab517ea05377155
+log_events: 
+- - 2009-05-25 07:11:17.710948 Z
+  - Erik Ostrom <erik@echographia.com>
+  - created
+  - ""
+- - 2009-05-25 07:15:56.408320 Z
+  - Erik Ostrom <erik@echographia.com>
+  - changed status from unstarted to in_progress
+  - Pretty much done already.
+- - 2009-05-25 07:22:19.250320 Z
+  - Erik Ostrom <erik@echographia.com>
+  - closed with disposition fixed
+  - Issue-specific commands now look for an issue on the current line first (where it'll be in a status buffer), then on the first line of the buffer (where it'll be in a show buffer).
