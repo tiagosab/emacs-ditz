@@ -177,7 +177,7 @@ must set it from minibuffer."
 (defun ditz-extract-thing-at-point (regex n)
   (save-excursion
     (let ((line (buffer-substring-no-properties (progn (beginning-of-line) (point))
-				  (progn (end-of-line) (point)))))
+						(progn (end-of-line) (point)))))
       (when (string-match regex line)
 	(match-string n line)))))
 
@@ -213,31 +213,31 @@ must set it from minibuffer."
 	  (sit-for 1)
 	  (delete-process proc))
 
-    (with-current-buffer buffer
-      (erase-buffer)
-      (buffer-disable-undo (current-buffer)))
+      (with-current-buffer buffer
+	(erase-buffer)
+	(buffer-disable-undo (current-buffer)))
 
-    (make-comint-in-buffer "ditz-call-process"
-			   buffer shell-file-name nil shell-command-switch
-			   (ditz-build-command command arg))
+      (make-comint-in-buffer "ditz-call-process"
+			     buffer shell-file-name nil shell-command-switch
+			     (ditz-build-command command arg))
 
-    (cond ((or (eq major-mode 'ditz-mode)
-	       (string= popup-flag "switch"))
-	   (switch-to-buffer buffer))
-	  ((string= popup-flag "pop")
-	   (pop-to-buffer buffer))
-	  ((string= popup-flag "display")
-	   (display-buffer buffer))
-	  (t
-	   (set-buffer buffer)))
+      (cond ((or (eq major-mode 'ditz-mode)
+		 (string= popup-flag "switch"))
+	     (switch-to-buffer buffer))
+	    ((string= popup-flag "pop")
+	     (pop-to-buffer buffer))
+	    ((string= popup-flag "display")
+	     (display-buffer buffer))
+	    (t
+	     (set-buffer buffer)))
 
-    (set-process-sentinel
-     (get-buffer-process buffer)
-     '(lambda (process signal)
-	(when (string= signal "finished\n")
-	  (with-current-buffer (process-buffer process)
-	    (ditz-mode)
-	    (goto-char (point-min)))))))))
+      (set-process-sentinel
+       (get-buffer-process buffer)
+       '(lambda (process signal)
+	  (when (string= signal "finished\n")
+	    (with-current-buffer (process-buffer process)
+	      (ditz-mode)
+	      (goto-char (point-min)))))))))
 
 (defvar ditz-last-visited-issue-directory nil)
 
@@ -262,7 +262,7 @@ must set it from minibuffer."
 			  (t
 			   (cd ".."))))))
 	   (setq issue-directory
-			    (concat default-directory ditz-issue-directory)))
+		 (concat default-directory ditz-issue-directory)))
 	  (t
 	   (setq issue-directory
 		 (read-file-name "Issue dir: "
