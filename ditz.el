@@ -293,6 +293,9 @@ must set it from minibuffer."
 	(if (re-search-forward "^\\s-*Status: \\(.*\\)\\s-*$")
 	    (intern (subst-char-in-string ?\ ?\- (match-string 1))))))))
 
+;; define ditz-view-issue-{next,prev}
+(easy-mmode-define-navigation ditz-view-issue ditz-issue-id-regex "issue")
+
 ;; Hooks
 (defvar ditz-mode-hook nil
   "*Hooks for Ditz major mode")
@@ -301,6 +304,8 @@ must set it from minibuffer."
 (defvar ditz-mode-map
   (let ((map (make-keymap)))
     (suppress-keymap map t)
+    (define-key map (kbd "n")    'ditz-view-issue-next)
+    (define-key map (kbd "p")    'ditz-view-issue-prev)
     (define-key map (kbd "s")    'ditz-show)
     (define-key map (kbd "\C-m") 'ditz-show)
     (define-key map (kbd "A")    'ditz-add)
