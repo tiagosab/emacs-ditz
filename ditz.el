@@ -277,7 +277,7 @@ must set it from minibuffer."
     (mapconcat 'identity
 	       (list ditz-program
 		     "-i" (shell-quote-argument issue-directory)
-		     command arg) " ")))
+		     command (and arg (shell-quote-argument arg))) " ")))
 
 (defun ditz-issue-status ()
   "Return symbol indicating issue's status."
