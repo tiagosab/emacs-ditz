@@ -25,6 +25,8 @@
 
 ;;; Code:
 
+(require 'easy-mmode)
+
 ;; Customizable variables
 (defcustom ditz-program "ditz"
   "Ditz command"
