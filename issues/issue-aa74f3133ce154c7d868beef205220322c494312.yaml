@@ -1,0 +1,27 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: confusion reigns when switching between ditz issue directories
+desc: |-
+  Given two ditz issue directories, dir1 and dir2:
+  1. Run ditz-todo for dir1.
+  2. Move to an issue line and press enter to run ditz-show.
+  3. Run ditz-todo for dir2. PROBLEM: You get the todo list for dir1 instead.
+  4. Kill the todo buffer. Run ditz-todo for dir2 again.
+  5. Move to an issue line and press enter to run ditz-show. PROBLEM: "no issue with name ..." error.
+  
+  Basically ditz.el seems to remember what directory each buffer was created from. Instead of paying attention to new information (an explicitly provided directory name, or the ditz-todo buffer from which ditz-show was called), it just keeps working w
+  ith the original directory until the buffer is killed.
+type: :bugfix
+component: emacs-ditz
+release: 
+reporter: Erik Ostrom <erik@echographia.com>
+status: :unstarted
+disposition: 
+creation_time: 2009-05-25 08:55:51.117928 Z
+references: []
+
+id: aa74f3133ce154c7d868beef205220322c494312
+log_events: 
+- - 2009-05-25 08:55:52.629772 Z
+  - Erik Ostrom <erik@echographia.com>
+  - created
+  - ""
