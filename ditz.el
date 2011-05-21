@@ -47,7 +47,9 @@ must set it from minibuffer."
   :group 'ditz)
 
 ;; Constant variables
-(defconst ditz-issue-id-regex "^[_ ]+\\([^:\n]+\\):.*$"
+(defconst ditz-issue-id-regex 
+  (concat "^\\(_ \\([^:\n]+\\):\\|"
+          "[ ]+issue: \\[\\([^:\n]+\\)\\] \\)")
   "Regex for issue id.")
 
 (defconst ditz-release-name-regex "^\\(Version \\)?\\([^\n ]+\\) *.*$"
@@ -92,8 +94,12 @@ must set it from minibuffer."
 (defun ditz-show ()
   "Show issue detale."
   (interactive)
-  (let ((issue-id nil))
-    (setq issue-id (ditz-extract-thing-at-point ditz-issue-id-regex 1))
+  (let ((issue-id (save-excursion 
+                    (beginning-of-line)
+                    (if (looking-at ditz-issue-id-regex)
+                        (or (match-string 2)
+                            (match-string 3))))))
+    (message "%s" issue-id)
     (if issue-id
         (ditz-call-process "show" issue-id "switch")
       (error "Issue id not found"))))
